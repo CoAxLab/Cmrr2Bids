@@ -1,3 +1,3 @@
 future>=0.16.0
 pydicom>=1.3.0
--e git+git://github.com/CoAxLab/Cmrr2Log@egg=Cmrr2Log
+-e git+git://github.com/CoAxLab/Cmrr2Log#egg=Cmrr2Log
