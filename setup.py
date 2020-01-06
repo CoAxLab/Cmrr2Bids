@@ -36,6 +36,5 @@ if __name__ == "__main__":
             url=URL,
             download_url=DOWNLOAD_URL,
             packages=['cmrr2bids'],
-            entry_points= ENTRY_POINTS,
-            install_requires=['future']
+            entry_points= ENTRY_POINTS
             )
