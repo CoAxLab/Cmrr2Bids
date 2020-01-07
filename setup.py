@@ -39,6 +39,7 @@ if __name__ == "__main__":
             packages=['cmrr2bids'],
             entry_points= ENTRY_POINTS,
             install_requires = ['future>=0.16.0', 
-                                'pydicom>=1.3.0',
-                                'Cmrr2Log @ git+git://github.com/CoAxLab/Cmrr2Log@master#egg=Cmrr2Log'],
+                                'pydicom>=1.3.0'],
+                                #'Cmrr2Log @ git+git://github.com/CoAxLab/Cmrr2Log@master#egg=Cmrr2Log'],
+            dependency_links=['http://github.com/CoAxLab/Cmrr2Log/master#egg=Cmrr2Log']
             )
