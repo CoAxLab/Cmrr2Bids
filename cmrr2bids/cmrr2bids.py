@@ -15,7 +15,7 @@ from argparse import ArgumentDefaultsHelpFormatter
 
 from .cmrr2log import Cmrr2Log
 from .reading import read_log_file
-from .utils import create_record_dict
+from .utils import (create_record_dict, synchronise_signal)
 
 class Cmrr2Bids(object):
     
@@ -72,7 +72,7 @@ class Cmrr2Bids(object):
        if last_tck_time <= first_tck_time:
            raise ValueError('Last timestamp is not greater than first timestamp, aborting...')
        actual_samples = last_tck_time - first_tck_time + 1 
-       expected_samples = actual_samples + 8 # some padding at the end for worst case EXT sample at last timestamp    
+       expected_samples = actual_samples  # + 8 some padding at the end for worst case EXT sample at last timestamp    
        
        # Remove log file
        os.unlink(info_log_file)
@@ -82,18 +82,19 @@ class Cmrr2Bids(object):
            if 'ECG' in file:
                acq, params = read_log_file(file, 'ECG', 'EJA_1', first_tck_time, expected_samples)
                signal = acq[:, 1:]
+               rec_time = acq[:, 0]/self.sampling_frequency
                start_time = acq[0, 0]/self.sampling_frequency - start_acq_time
                recording_sampling = self.sampling_frequency/params['SampleTime']
-               record_dict = create_record_dict(signal,  
-                                                'cardiac', 
-                                                start_time, 
-                                                recording_sampling)
+               record_dict = create_record_dict(signal,  'cardiac', 
+                                                start_time, recording_sampling)
                
-               #save signal
+               # Synchronise signal
+               signal_sinc = synchronise_signal(signal, rec_time, recording_sampling)
+               # save signal
                np.savetxt(opj(self.output_dir, basename + '_recording-cardiac_physio.tsv.gz'),
-                          signal, fmt = '%.3f',
+                          signal_sinc, fmt = '%.3f',
                           delimiter='\t')
-               #save json 
+               # save json 
                with open(opj(self.output_dir, basename + '_recording-cardiac_physio.json'), 'w') as f:
                    json.dump(record_dict, f, indent=4)
                
@@ -104,6 +105,7 @@ class Cmrr2Bids(object):
            elif 'RESP' in file:
                acq, params = read_log_file(file, 'RESP', 'EJA_1', first_tck_time, expected_samples)
                signal = acq[:, 1:]
+               rec_time = acq[:, 0]/self.sampling_frequency
                start_time = acq[0, 0]/self.sampling_frequency - start_acq_time
                recording_sampling = self.sampling_frequency/params['SampleTime']
                record_dict = create_record_dict(signal, 
@@ -111,9 +113,11 @@ class Cmrr2Bids(object):
                                                 start_time, 
                                                 recording_sampling)
                
+               # Synchronise signal
+               signal_sinc = synchronise_signal(signal, rec_time, recording_sampling)
                #save signal
                np.savetxt(opj(self.output_dir, basename + '_recording-respiratory_physio.tsv.gz'),
-                          signal, fmt = '%.3f',
+                          signal_sinc, fmt = '%.3f',
                           delimiter='\t')
                
                #save json file
@@ -127,15 +131,18 @@ class Cmrr2Bids(object):
            elif 'PULS' in file:
                acq, params = read_log_file(file, 'PULS', 'EJA_1', first_tck_time, expected_samples)
                signal = acq[:, 1:]
+               rec_time = acq[:, 0]/self.sampling_frequency
                start_time = acq[0, 0]/self.sampling_frequency - start_acq_time
                recording_sampling = self.sampling_frequency/params['SampleTime']
                record_dict= create_record_dict(signal, 
                                                'pulse', 
                                                start_time, 
                                                recording_sampling)
+               # Synchronise signal
+               signal_sinc = synchronise_signal(signal, rec_time, recording_sampling)
                #save signal
                np.savetxt(opj(self.output_dir, basename + '_recording-pulse_physio.tsv.gz'),
-                          signal, fmt = '%.3f',
+                          signal_sinc, fmt = '%.3f',
                           delimiter='\t')
                
                #save json file
