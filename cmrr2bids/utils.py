@@ -40,7 +40,7 @@ def synchronise_signal(signal, time, sampling_frequency):
         
     interp = interp1d(time, signal, kind = 'linear', fill_value = 'extrapolate')
     
-    n_points, _ = signal.shape
+    n_points = signal.shape[0]
     new_time = np.arange(n_points)/sampling_frequency
     
     return interp(new_time)

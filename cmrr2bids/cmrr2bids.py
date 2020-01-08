@@ -89,8 +89,9 @@ class Cmrr2Bids(object):
                                                 start_time, recording_sampling)
                
                # Synchronise signal
-               signal_sinc = synchronise_signal(signal, rec_time, recording_sampling)
-               # save signal
+               signal_sinc = np.apply_along_axis(synchronise_signal, 
+                                                 0, 
+                                                 signal, rec_time, recording_sampling)               # save signal
                np.savetxt(opj(self.output_dir, basename + '_recording-cardiac_physio.tsv.gz'),
                           signal_sinc, fmt = '%.3f',
                           delimiter='\t')
@@ -114,7 +115,9 @@ class Cmrr2Bids(object):
                                                 recording_sampling)
                
                # Synchronise signal
-               signal_sinc = synchronise_signal(signal, rec_time, recording_sampling)
+               signal_sinc = np.apply_along_axis(synchronise_signal, 
+                                                 0, 
+                                                 signal, rec_time, recording_sampling)
                #save signal
                np.savetxt(opj(self.output_dir, basename + '_recording-respiratory_physio.tsv.gz'),
                           signal_sinc, fmt = '%.3f',
@@ -139,7 +142,9 @@ class Cmrr2Bids(object):
                                                start_time, 
                                                recording_sampling)
                # Synchronise signal
-               signal_sinc = synchronise_signal(signal, rec_time, recording_sampling)
+               signal_sinc = np.apply_along_axis(synchronise_signal, 
+                                                 0, 
+                                                 signal, rec_time, recording_sampling)
                #save signal
                np.savetxt(opj(self.output_dir, basename + '_recording-pulse_physio.tsv.gz'),
                           signal_sinc, fmt = '%.3f',
