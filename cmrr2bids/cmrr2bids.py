@@ -166,8 +166,9 @@ class Cmrr2Bids(object):
         if self.session_label:
             basename = basename + "_ses-" + self.session_label    
 
-        #Prepend to input basename            
-        basename = basename + "_" + self.basename
+        #Append to input basename
+        if self.basename:            
+             basename = basename + "_" + self.basename
         
         return basename
     
@@ -196,7 +197,7 @@ def get_parser():
     parser.add_argument('--name', 
                         dest = 'basename',
                         type=str,
-                        help='basename to preprend participant and session labels')
+                        help='basename to append to participant and session labels')
                  
     parser.add_argument('--bids_dir', action='store', type=Path,
                         help='the output path for the outcome physio files')
