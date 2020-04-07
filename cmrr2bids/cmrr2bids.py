@@ -81,10 +81,16 @@ class Cmrr2Bids(object):
            # create cardiac files
            if 'ECG' in file:
                acq, params = read_log_file(file, 'ECG', 'EJA_1', first_tck_time, expected_samples)
+               
+               # Take only unique tick times
+               _, unique_ticks = np.unique(acq[:,0], return_index=True)
+               acq = acq[unique_ticks, :]
+               
                signal = acq[:, 1:]
                rec_time = acq[:, 0]/self.sampling_frequency
                start_time = acq[0, 0]/self.sampling_frequency - start_acq_time
                recording_sampling = self.sampling_frequency/params['SampleTime']
+               
                record_dict = create_record_dict(signal,  'cardiac', 
                                                 start_time, recording_sampling)
                
@@ -105,10 +111,16 @@ class Cmrr2Bids(object):
            # create respiratory files    
            elif 'RESP' in file:
                acq, params = read_log_file(file, 'RESP', 'EJA_1', first_tck_time, expected_samples)
+               
+               # Take only unique tick times
+               _, unique_ticks = np.unique(acq[:,0], return_index=True)
+               acq = acq[unique_ticks, :]
+               
                signal = acq[:, 1:]
                rec_time = acq[:, 0]/self.sampling_frequency
                start_time = acq[0, 0]/self.sampling_frequency - start_acq_time
                recording_sampling = self.sampling_frequency/params['SampleTime']
+               
                record_dict = create_record_dict(signal, 
                                                 'respiratory', 
                                                 start_time, 
@@ -133,10 +145,16 @@ class Cmrr2Bids(object):
            # create pulse files        
            elif 'PULS' in file:
                acq, params = read_log_file(file, 'PULS', 'EJA_1', first_tck_time, expected_samples)
+               
+               # Take only unique tick times
+               _, unique_ticks = np.unique(acq[:,0], return_index=True)
+               acq = acq[unique_ticks, :]
+               
                signal = acq[:, 1:]
                rec_time = acq[:, 0]/self.sampling_frequency
                start_time = acq[0, 0]/self.sampling_frequency - start_acq_time
                recording_sampling = self.sampling_frequency/params['SampleTime']
+               
                record_dict= create_record_dict(signal, 
                                                'pulse', 
                                                start_time, 
